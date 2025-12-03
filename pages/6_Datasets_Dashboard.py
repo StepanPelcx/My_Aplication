@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.set_page_config(page_title="Datasets Dashboard", page_icon="📋", layout="wide")
+st.set_page_config(page_title="📁Datasets Dashboard📁", page_icon="📁📋", layout="wide")
 
 # Ensure state keys exist (in case user opens this page first)
 if "logged_in" not in st.session_state:
@@ -16,3 +16,21 @@ if not st.session_state.logged_in:
     if st.button("Go to login page"):
         st.switch_page("Home.py") # back to the first page
     st.stop()
+
+
+st.header("📁Datasets Dashboard📁")
+
+
+
+# Sidebar logout button
+with st.sidebar:
+    if st.button("Log out   ➜]"):
+        st.session_state.logged_in = False
+        st.session_state.username = ""
+        st.info("You have been logged out.")
+        st.switch_page("Home.py")
+
+    if not st.session_state.logged_in:
+        st.error("You must be logged in...")
+        st.switch_page("Home.py")
+        st.stop()

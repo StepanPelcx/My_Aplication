@@ -1,6 +1,6 @@
 import streamlit as st
 from openai import OpenAI
-from database.incidents import get_all_incidents  # Week 8from database.db import connect_database  # Week 8
+from data import get_all_incidents  # Week 8from database.db import connect_database  # Week 8
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 

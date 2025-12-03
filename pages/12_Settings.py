@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from user_handling.verification import change_password, verify_password, validate_password, get_user_role
+from user_handling.verification import change_password, verify_password, validate_password, get_user_role, get_all_users_info
 
 st.set_page_config(page_title="Settings", page_icon="⚙️", layout="wide")
 
@@ -16,6 +16,8 @@ if "confirm_password_change" not in st.session_state:
     st.session_state.confirm_password_change = False
 if "get_user_role" not in st.session_state:
     st.session_state.get_user_role = False
+if "get_all_users" not in st.session_state:
+    st.session_state.get_all_users = False
 
 
 # Guard: if not logged in, send user back
@@ -117,3 +119,21 @@ if st.session_state.get_user_role:
     if st.button("Done"):
         st.session_state.get_user_role = False
         st.stop()
+
+
+#users df, if admin get all the users info
+
+if st.button("All users info"):
+    st.session_state.get_all_users = True
+
+if st.session_state.get_all_users:
+    user_role = get_user_role(st.session_state.username)
+    if user_role != "admin":
+        st.error('❌Only "admin" users can view this.❌')
+        st.session_state.get_all_users = False
+        st.stop()
+    else:
+        st.dataframe(get_all_users_info())
+        if st.button("Back"):
+            st.session_state.get_all_users = False
+            st.stop()

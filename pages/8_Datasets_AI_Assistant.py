@@ -35,13 +35,13 @@ with st.sidebar:
     
     
     # Show message count
-    message_count = sum(1 for message in st.session_state.get("messages", []) if message["role"] in ["user", "assistant"])
+    message_count = sum(1 for message in st.session_state.get("messages_DS", []) if message["role"] in ["user", "assistant"])
     st.metric("Messages", message_count)
     
     # Clear chat button
     if st.button("🗑️ Clear Chat", use_container_width=True):
         # Reset messages to initial state
-        st.session_state.messages = [
+        st.session_state.messages_DS = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "assistant", "content": "Hello! How can I help you today?"}
         ]
@@ -49,15 +49,15 @@ with st.sidebar:
         st.rerun()
 
 # ═══════════════════════════════════════════════# Initialize session state# ═══════════════════════════════════════════════
-if "messages" not in st.session_state:
-    st.session_state.messages = [
+if "messages_DS" not in st.session_state:
+    st.session_state.messages_DS = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "assistant", "content": "Hello! How can I help you today?"}
     ]
 
 
 # Display existing messages
-for message in st.session_state.messages:
+for message in st.session_state.messages_DS:
     if message["role"] != "system":
         with st.chat_message(message["role"]):
             st.write(message["content"])
@@ -70,14 +70,14 @@ if user_input:
         st.write(user_input)
     
 # Add to session state
-    st.session_state.messages.append(
+    st.session_state.messages_DS.append(
         {"role": "user", "content": user_input}
     )
     
 # ═══════════════════════════════════════════════# STREAMING: Enable stream=True parameter# ═══════════════════════════════════════════════
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
-        messages=st.session_state.messages,
+        messages=st.session_state.messages_DS,
         stream=True # ← Enable streaming!
         )
     
@@ -86,7 +86,7 @@ if user_input:
         message_placeholder = st.empty()
         full_response = ""
 # ═══════════════════════════════════════════════# STEP 2: Process chunks as they arrive# ═══════════════════════════════════════════════
-        with st.spinner("thinking..."):  
+        with st.spinner("Typing..."):  
             for chunk in response:
                 # Extract content from chunk
                 if chunk.choices[0].delta.content is not None:
@@ -100,12 +100,12 @@ if user_input:
     message_placeholder.markdown(full_response)
     
     # Save complete response to session state
-    st.session_state.messages.append(
+    st.session_state.messages_DS.append(
             {"role": "assistant", "content": full_response}
         )
 
 
-# Specialized system prompt for cyber incidents
+# Specialized system prompt for Data Science
 messages = [
     {
         "role": "system",

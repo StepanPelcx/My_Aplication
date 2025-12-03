@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime
+from data.schema import create_all_tables
 
 st.set_page_config(page_title="Dashboard", page_icon="📋", layout="wide")
 
@@ -41,10 +42,15 @@ st.markdown(
     f"📅{now.strftime("%A %dth %B %Y")}   \n"
     f"⏰{now.strftime("%H:%M")}"
 )
- 
+#button for swithing to settings
+if st.button("⚙️Settings⚙️"):
+    st.switch_page("pages/12_Settings.py")
+        
 
 #Showing success login only once
 if st.session_state.show_login_success:
+    #Making sure all the tables are created
+    create_all_tables()
     st.success(f"Hello, **{st.session_state.username}**! You are logged in.")
     #making sure success login message shows only once
     st.session_state.show_login_success = False

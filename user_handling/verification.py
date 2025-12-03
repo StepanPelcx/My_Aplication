@@ -5,6 +5,7 @@ from pathlib import Path
 import sqlite3
 from user_handling.schema import create_users_table
 from user_handling.db import connect_database
+import pandas as pd
 
 
 #FINDING USER IN DATABASE
@@ -217,3 +218,13 @@ def get_user_role(username):
     conn.close()
     role = user[3]
     return role
+
+
+def get_all_users_info():
+    """Get all users as DataFrame."""
+    conn = connect_database()
+    df = pd.read_sql_query(
+        "SELECT username, role FROM users ORDER BY id DESC", conn
+    )
+    conn.close()
+    return df
