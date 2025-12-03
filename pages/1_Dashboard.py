@@ -12,6 +12,9 @@ if "logged_in" not in st.session_state:
 if "username" not in st.session_state:
     st.session_state.username = ""
 
+#Ensure all tables exist
+create_all_tables()
+
 # Guard: if not logged in, send user back
 if not st.session_state.logged_in:
     st.error("You must be logged in to view the dashboard.")
@@ -50,7 +53,6 @@ if st.button("⚙️Settings⚙️"):
 #Showing success login only once
 if st.session_state.show_login_success:
     #Making sure all the tables are created
-    create_all_tables()
     st.success(f"Hello, **{st.session_state.username}**! You are logged in.")
     #making sure success login message shows only once
     st.session_state.show_login_success = False
@@ -86,5 +88,4 @@ with col3:
     st.image("images/tickets.jpg", use_container_width=True)
     if tickets:
         st.switch_page("pages/9_Tickets_Dashboard.py")
-
 

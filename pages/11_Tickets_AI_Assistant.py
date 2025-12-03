@@ -14,6 +14,7 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py") # back to the first page
     st.stop()
 
+
 st.header("IT Operations Assistant")
 #st.text("This AI Assistant is not specialyst in any fields. \nIts purpose is mainly for general questions.")
 

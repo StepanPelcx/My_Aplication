@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from data.incidents import get_incidents_by_type_count, get_high_severity_by_status, get_all_incidents
 
 st.set_page_config(page_title="🛡️📊📈Cyber Security Analytics📈📊🛡️", page_icon="📊📈", layout="wide")
 
@@ -17,8 +19,93 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py") # back to the first page
     st.stop()
 
-
 st.header("🛡️📊📈Cyber Security Analytics📈📊🛡️")
+
+col1, col2, col3 = st.columns(3)
+
+
+with col1:
+    #getting data frame for the graphs
+    df = get_all_incidents()
+
+    #first graph
+    st.subheader("Incidents by Type")
+    #getting the number of each incident type
+    type_counts = df['incident_type'].value_counts()
+    graph1, ax1 = plt.subplots()
+    #creating the bar graph
+    ax1.bar(type_counts.index, type_counts.values, color='skyblue')
+    #setting labels
+    ax1.set_xlabel("Incident Type")
+    ax1.set_ylabel("Count")
+    ax1.set_title("Number of Incidents by Type")
+
+    plt.xticks(rotation=45)
+    #displaying graph
+    st.pyplot(graph1)
+
+
+    #second graph
+    st.subheader("Severity Distribution")
+
+    #getting the count of each severity type
+    severity_counts = df['severity'].value_counts()
+    graph2, ax2 = plt.subplots()
+    #creating the pie graph, with displaying percentage 
+    ax2.pie(severity_counts.values, labels=severity_counts.index, autopct='%1.1f%%', colors=['orange', 'red', 'green', 'purple'])
+    #title
+    ax2.set_title("Incident Severity Distribution")
+    #displaying graph
+    st.pyplot(graph2)
+
+    #third graph
+    st.subheader("Incident Status by Severity")
+    #grouping status with severity
+    status_severity = df.groupby(['severity', 'status']).size().unstack(fill_value=0)
+    fig3, ax3 = plt.subplots()
+    #creating the graph
+    status_severity.plot(kind='bar', stacked=True, ax=ax3, colormap='viridis')
+    #naming the labels
+    ax3.set_xlabel("Severity")
+    ax3.set_ylabel("Number of Incidents")
+    ax3.set_title("Incident Status by Severity")
+    #displaying the graph
+    st.pyplot(fig3)
+
+
+with col2:
+    #getting data frame for graphs
+    df = get_all_incidents()
+
+    #first graph
+    #getting count of each incident type
+    type_count = df['incident_type'].value_counts()
+    #reset index
+    df_type_count = type_count.reset_index()
+    df_type_count.columns = ['incident_type', 'count']
+    #displaying the graph
+    st.bar_chart(df_type_count.set_index('incident_type'))
+
+
+    #second graph
+
+    #letting the user select a date range
+    start_date = st.date_input("Start date", df['date'].min())
+    end_date = st.date_input("End date", df['date'].max())
+
+    #filter the data frame based on selected date range
+    filtered_df = df[(df['date'] >= pd.to_datetime(start_date)) & (df['date'] <= pd.to_datetime(end_date))]
+
+    #counting incidents per day
+    incidents_by_day = filtered_df.groupby('date').size().reset_index(name='count')
+
+    #displaying graph
+    st.subheader("Incidents Over Time")
+    st.line_chart(incidents_by_day.set_index('date'))
+
+
+with col3:
+    pass
 
 
 # Sidebar logout button

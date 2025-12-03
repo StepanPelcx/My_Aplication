@@ -1,8 +1,9 @@
 import pandas as pd
 from user_handling.db import connect_database
+from pathlib import Path
 
 
-def insert_incident(conn, date, incident_type, severity, status, description, reported_by=None):
+def insert_incident(date, incident_type, severity, status, description, reported_by=None):
     """
     Insert a new cyber incident into the database.
     
@@ -48,7 +49,7 @@ def get_all_incidents():
     return df
 
 
-def update_incident_status(conn, incident_id, new_status):
+def update_incident_status(incident_id, new_status):
     """Update the status of an incident."""
     """
     TODO: Implement UPDATE operation.
@@ -68,7 +69,7 @@ def update_incident_status(conn, incident_id, new_status):
     return cur.rowcount
 
 
-def delete_incident(conn, incident_id):
+def delete_incident(incident_id):
     """Delete an incident from the database."""
     """
     TODO: Implement DELETE operation.
@@ -89,7 +90,7 @@ def delete_incident(conn, incident_id):
 
 
 
-def get_incidents_by_type_count(conn):
+def get_incidents_by_type_count():
     """
     Count incidents by type.
     Uses: SELECT, FROM, GROUP BY, ORDER BY
@@ -100,11 +101,12 @@ def get_incidents_by_type_count(conn):
     GROUP BY incident_type
     ORDER BY count DESC
     """
+    conn = connect_database()
     df = pd.read_sql_query(query, conn)
     return df
 
 
-def get_high_severity_by_status(conn):
+def get_high_severity_by_status():
     """
     Count high severity incidents by status.
     Uses: SELECT, FROM, WHERE, GROUP BY, ORDER BY
@@ -116,10 +118,11 @@ def get_high_severity_by_status(conn):
     GROUP BY status
     ORDER BY count DESC
     """
+    conn = connect_database()
     df = pd.read_sql_query(query, conn)
     return df
 
-def get_incident_types_with_many_cases(conn, min_count=5):
+def get_incident_types_with_many_cases(min_count=5):
     """
     Find incident types with more than min_count cases.
     Uses: SELECT, FROM, GROUP BY, HAVING, ORDER BY
@@ -131,6 +134,32 @@ def get_incident_types_with_many_cases(conn, min_count=5):
     HAVING COUNT(*) > ?
     ORDER BY count DESC
     """
+    conn = connect_database()
     df = pd.read_sql_query(query, conn, params=(min_count,))
     return df
+
+
+def migrate_incidents():
+    """Migrates all the incidents from csv file"""
+    #getting the path
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    DATA_DIR = BASE_DIR / "database"
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DB_PATH = DATA_DIR / "cyber_incidents.csv"
+
+    df = pd.read_csv(DB_PATH)
+
+    if not df.empty:
+        for index, row in df.iterrows():
+            insert_incident(
+                date=str(row["date"]),
+                incident_type=row["incident_type"],
+                severity=row["severity"],
+                status=row["status"],
+                description=row["description"],
+                reported_by=row.get("reported_by")
+            )
+        return True
+    return False
+
 

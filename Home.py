@@ -84,7 +84,7 @@ with tab_register:
         if not new_username or not new_password:
             st.warning("Please fill in all fields.")
         elif new_password != confirm_password:
-            st.error("Passwords do not match.")
+            st.error("Passwords do not match."      )
         elif new_username in st.session_state.users:
             st.error("Username already exists. Choose another one.")
         else:
