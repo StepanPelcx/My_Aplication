@@ -27,10 +27,6 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py") # back to the first page
     st.stop()
 
-
-# If logged in, show dashboard content
-st.title("⚙️ Settings")
-
 # Sidebar logout button
 with st.sidebar:
     if st.button("Log out   ➜]"):
@@ -44,7 +40,14 @@ with st.sidebar:
         st.switch_page("Home.py")
         st.stop()
 
+# Sidebar back to dashboard button
+with st.sidebar:
+    if st.button("Back to Dashboard"):
+        st.switch_page("pages/1_Dashboard.py")
 
+
+# If logged in, show dashboard content
+st.title("⚙️ Settings")
 
 #button for changing password
 if st.button("🔐🔄Change password🔄🔐"):

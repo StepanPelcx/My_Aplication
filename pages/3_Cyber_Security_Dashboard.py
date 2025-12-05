@@ -23,6 +23,25 @@ if not st.session_state.logged_in:
     st.stop()
 
 
+# Sidebar logout button
+with st.sidebar:
+    if st.button("Log out   ➜]"):
+        st.session_state.logged_in = False
+        st.session_state.username = ""
+        st.info("You have been logged out.")
+        st.switch_page("Home.py")
+
+    if not st.session_state.logged_in:
+        st.error("You must be logged in...")
+        st.switch_page("Home.py")
+        st.stop()
+        
+
+# Sidebar back to dashboard button
+with st.sidebar:
+    if st.button("Back to Dashboard"):
+        st.switch_page("pages/1_Dashboard.py")
+
 
 st.header("🛡️📋Cyber Security Dashboard📋🛡️")
 
@@ -182,4 +201,5 @@ if incident_many_cases_button:
         #visualization
         st.subheader("Chart")
         st.bar_chart(df.set_index("incident_type"))
+
 

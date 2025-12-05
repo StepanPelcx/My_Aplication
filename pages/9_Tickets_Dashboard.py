@@ -19,12 +19,7 @@ if not st.session_state.logged_in:
         st.switch_page("Home.py") # back to the first page
     st.stop()
 
-
-
-
 st.header("🎟️Tickets Dashboard🎟️")
-
-
 
 # Sidebar logout button
 with st.sidebar:
@@ -38,6 +33,12 @@ with st.sidebar:
         st.error("You must be logged in...")
         st.switch_page("Home.py")
         st.stop()
+
+# Sidebar back to dashboard button
+with st.sidebar:
+    if st.button("Back to Dashboard"):
+        st.switch_page("pages/1_Dashboard.py")
+        
 
 st.subheader("Migrate Tickets From CSV File")
 st.info("Make sure CSV file is migrated before working with other functions.")

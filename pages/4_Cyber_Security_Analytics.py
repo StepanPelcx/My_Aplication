@@ -204,3 +204,9 @@ with st.sidebar:
         st.error("You must be logged in...")
         st.switch_page("Home.py")
         st.stop()
+
+
+# Sidebar back to dashboard button
+with st.sidebar:
+    if st.button("Back to Dashboard"):
+        st.switch_page("pages/1_Dashboard.py")

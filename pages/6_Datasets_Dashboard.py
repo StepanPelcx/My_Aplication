@@ -35,6 +35,11 @@ with st.sidebar:
         st.switch_page("Home.py")
         st.stop()
 
+# Sidebar back to dashboard button
+with st.sidebar:
+    if st.button("Back to Dashboard"):
+        st.switch_page("pages/1_Dashboard.py")
+
 
 st.subheader("Migrate Datasets From CSV File")
 st.info("Make sure CSV file is migrated before working with other functions.")
