@@ -1,7 +1,8 @@
 import pandas as pd
 from user_handling.db import connect_database
+from pathlib import Path
 
-def insert_dataset(conn, ticket_id, priority, status, category, subject, description, created_date, resolved_date, assigned_to, created_at):
+def insert_ticket(ticket_id, priority, status, category, subject, description, created_date, resolved_date, assigned_to, created_at):
     """Insert a new dataset into the database."""
     # TODO: Get cursor
     conn = connect_database()
@@ -21,7 +22,7 @@ def insert_dataset(conn, ticket_id, priority, status, category, subject, descrip
     return ticket_id
 
 
-def get_all_datasets():
+def get_all_tickets():
     """Get all incidents as DataFrame."""
     conn = connect_database()
     df = pd.read_sql_query(
@@ -31,7 +32,7 @@ def get_all_datasets():
     return df
 
 
-def update_ticket_status(conn, ticket_id, new_status):
+def update_ticket_status(ticket_id, new_status):
     """Update the status of a ticket."""
     """
     TODO: Implement UPDATE operation.
@@ -51,7 +52,7 @@ def update_ticket_status(conn, ticket_id, new_status):
     return cur.rowcount
 
 
-def delete_ticket(conn, ticket_id):
+def delete_ticket(ticket_id):
     """Delete a ticket from the database."""
     """
     TODO: Implement DELETE operation.
@@ -71,7 +72,7 @@ def delete_ticket(conn, ticket_id):
     return rowcount
 
 
-def get_tickets_by_category_count(conn):
+def get_tickets_by_category_count():
     """
     Count categories by type.
     Uses: SELECT, FROM, GROUP BY, ORDER BY
@@ -82,11 +83,12 @@ def get_tickets_by_category_count(conn):
     GROUP BY category
     ORDER BY count DESC
     """
+    conn = connect_database()
     df = pd.read_sql_query(query, conn)
     return df
 
 
-def get_tickets_by_status(conn, status="Open"):
+def get_tickets_by_status(status="Open"):
     """Returns tickets with given status."""
 
     conn = connect_database()
@@ -97,3 +99,31 @@ def get_tickets_by_status(conn, status="Open"):
     )
     conn.close()
     return df   
+
+
+def migrate_datasets():
+    """Migrates all tickets info from the CSV file."""
+    #getting the path
+    BASE_DIR = Path(__file__).resolve().parent.parent
+    DATA_DIR = BASE_DIR / "database"
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DB_PATH = DATA_DIR / "it_tickets.csv"
+
+    df = pd.read_csv(DB_PATH)
+
+    if not df.empty:
+        for index, row in df.iterrows():
+            insert_ticket(
+                ticket_id=row["ticket_id"],
+                priority=row["priority"],
+                status=row["status"],
+                category=row["category"],
+                subject=row["subject"],
+                description=row["description"],
+                created_date=str(row["created_date"]),
+                resolved_date=str(row["resolved_date"]) if not pd.isna(row["resolved_date"]) else None,
+                assigned_to=row["assigned_to"],
+                created_at=str(row["created_at"])
+            )
+        return True
+    return False
