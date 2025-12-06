@@ -42,10 +42,10 @@ def hash_password(plain_text_password):
 # TODO: Generate a salt using bcrypt.gensalt()
     salt = bcrypt.gensalt()
 # TODO: Hash the password using bcrypt.hashpw()
-    hashed_password = bcrypt.hashpw(password_bytes, salt)
+    __hashed_password = bcrypt.hashpw(password_bytes, salt)
 # TODO: Decode the hash back to a string to store in a text file
-    hashed_str = hashed_password.decode('utf-8')
-    return hashed_str
+    __hashed_str = __hashed_password.decode('utf-8')
+    return __hashed_str
 
 
 def register_user(username, password, role):
